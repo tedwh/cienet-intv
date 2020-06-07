@@ -18,3 +18,5 @@ spring:
     console:
       path: /h2-console
       enabled: true
+logging:
+  config: classpath:logback-config.xml

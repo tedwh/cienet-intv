@@ -36,7 +36,7 @@ public class EquityPositionServiceTest {
 		Transaction trans2 = new Transaction(2L, 2L, 1L, "ITC", 40, "INSERT", "Sell");
 		service.acceptTransaction(trans1);
 		service.acceptTransaction(trans2);
-		service.processTransaction();
+//		service.processStoredTransaction();
 		List<EquityPosition> resultList = service.listEquityPositions();
 		Map<String, Long> resultMap = new HashMap<>();
 		resultList.forEach(equity -> resultMap.put(equity.getEquity(), equity.getPosition()));
@@ -50,17 +50,17 @@ public class EquityPositionServiceTest {
 		cleanup();
 
 		List<Transaction> transList = new ArrayList<>();
+		transList.add(new Transaction(4L, 1L, 2L, "REL", 60, "UPDATE", "Buy"));
 		transList.add(new Transaction(1L, 1L, 1L, "REL", 50, "INSERT", "Buy"));
+		transList.add(new Transaction(5L, 2L, 2L, "ITC", 30, "CANCEL", "Buy"));
 		transList.add(new Transaction(2L, 2L, 1L, "ITC", 40, "INSERT", "Sell"));
 		transList.add(new Transaction(6L, 4L, 1L, "INF", 20, "INSERT", "Sell"));
-		transList.add(new Transaction(4L, 1L, 2L, "REL", 60, "UPDATE", "Buy"));
 		transList.add(new Transaction(3L, 3L, 1L, "INF", 70, "INSERT", "Buy"));
-		transList.add(new Transaction(5L, 2L, 2L, "ITC", 30, "CANCEL", "Buy"));
 
 		for (Transaction Transaction : transList) {
 			service.acceptTransaction(Transaction);
 		}
-		service.processTransaction();
+//		service.processStoredTransaction();
 		List<EquityPosition> resultList = service.listEquityPositions();
 		Map<String, Long> resultMap = new HashMap<>();
 		resultList.forEach(equity -> resultMap.put(equity.getEquity(), equity.getPosition()));
@@ -68,6 +68,27 @@ public class EquityPositionServiceTest {
 		Assert.assertEquals(new Long(60L), resultMap.get("REL"));
 		Assert.assertEquals(new Long(0L), resultMap.get("ITC"));
 		Assert.assertEquals(new Long(50L), resultMap.get("INF"));
+	}
+	
+	@Test
+	public void testUpdateAfterCancel() throws UnexpectedTransaction {
+		cleanup();
+
+		List<Transaction> transList = new ArrayList<>();
+		transList.add(new Transaction(1L, 2L, 1L, "ITC", 40, "INSERT", "Sell"));
+		transList.add(new Transaction(2L, 2L, 2L, "ITC", 30, "UPDATE", "Buy"));
+		transList.add(new Transaction(3L, 2L, 3L, "ITC", 40, "CANCEL", "Sell"));
+		transList.add(new Transaction(4L, 2L, 4L, "ITC", 30, "UPDATE", "Buy"));
+
+		for (Transaction Transaction : transList) {
+			service.acceptTransaction(Transaction);
+		}
+//		service.processStoredTransaction();
+		List<EquityPosition> resultList = service.listEquityPositions();
+		Map<String, Long> resultMap = new HashMap<>();
+		resultList.forEach(equity -> resultMap.put(equity.getEquity(), equity.getPosition()));
+
+		Assert.assertEquals(new Long(0L), resultMap.get("ITC"));
 	}
 
 	@Transactional
@@ -88,7 +109,7 @@ public class EquityPositionServiceTest {
 		Transaction trans2 = new Transaction(2L, 2L, 1L, "ITC", 40, "INSERT", "Sell");
 		service.acceptTransaction(trans1);
 		service.acceptTransaction(trans2);
-		service.processTransaction();
+//		service.processStoredTransaction();
 		List<EquityPosition> resultList = service.listEquityPositions();
 		Map<String, Long> resultMap = new HashMap<>();
 		resultList.forEach(equity -> resultMap.put(equity.getEquity(), equity.getPosition()));
@@ -99,17 +120,15 @@ public class EquityPositionServiceTest {
 		cleanup();
 
 		List<Transaction> transList = new ArrayList<>();
-		// CANCEL ITC transaction arrives before its INSERT message.
-		transList.add(new Transaction(1L, 1L, 1L, "REL", 50, "INSERT", "Buy"));
+		// CANCEL transaction of ITC have lower trade version then INSERT message.
 		transList.add(new Transaction(2L, 2L, 3L, "ITC", 30, "UPDATE", "Buy"));
-		transList.add(new Transaction(3L, 2L, 1L, "ITC", 40, "INSERT", "Sell"));
 		transList.add(new Transaction(4L, 2L, 2L, "ITC", 40, "CANCEL", "Sell"));
-		transList.add(new Transaction(5L, 1L, 2L, "REL", 60, "UPDATE", "Buy"));
+		transList.add(new Transaction(3L, 2L, 1L, "ITC", 40, "INSERT", "Sell"));
 
 		for (Transaction Transaction : transList) {
 			service.acceptTransaction(Transaction);
 		}
-		service.processTransaction();
+//		service.processTransaction();
 		List<EquityPosition> resultList = service.listEquityPositions();
 		Map<String, Long> resultMap = new HashMap<>();
 		resultList.forEach(equity -> resultMap.put(equity.getEquity(), equity.getPosition()));

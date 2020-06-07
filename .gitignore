@@ -4,7 +4,10 @@ HELP.md
 !**/src/main/**
 !**/src/test/**
 
-# Eclipse project files
+### projet runtime output
+position-management/data/**
+
+### Eclipse project files
 **/.classpath
 **/.project
 **/.settings

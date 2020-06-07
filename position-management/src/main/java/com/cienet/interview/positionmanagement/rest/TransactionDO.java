@@ -1,16 +1,6 @@
-package com.cienet.interview.positionmanagement.entity;
+package com.cienet.interview.positionmanagement.rest;
 
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-public class Transaction {
-	@Id
+public class TransactionDO {
 	private Long transactionId;
 	private Long tradeId;
 	private Long version;
@@ -18,13 +8,11 @@ public class Transaction {
 	private Integer quantity;
 	private String tradeActionType;
 	private String transactionType;
-	private Boolean processed = Boolean.FALSE;
-	private Date createTime;
 
-	public Transaction() {
+	public TransactionDO() {
 	}
 
-	public Transaction(Long transactionId, Long tradeId, Long version, String securityCode, Integer quantity,
+	public TransactionDO(Long transactionId, Long tradeId, Long version, String securityCode, Integer quantity,
 			String tradeActionType, String transactionType) {
 		super();
 		this.transactionId = transactionId;
@@ -92,22 +80,6 @@ public class Transaction {
 		this.transactionType = transactionType;
 	}
 
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Boolean getProcessed() {
-		return processed;
-	}
-
-	public void setProcessed(Boolean processed) {
-		this.processed = processed;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -130,7 +102,7 @@ public class Transaction {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Transaction other = (Transaction) obj;
+		TransactionDO other = (TransactionDO) obj;
 		if (securityCode == null) {
 			if (other.securityCode != null)
 				return false;
@@ -171,9 +143,9 @@ public class Transaction {
 
 	@Override
 	public String toString() {
-		return "Transaction [transactionId=" + transactionId + ", tradeId=" + tradeId + ", version=" + version
+		return "TransactionREST [transactionId=" + transactionId + ", tradeId=" + tradeId + ", version=" + version
 				+ ", securityCode=" + securityCode + ", quantity=" + quantity + ", tradeActionType=" + tradeActionType
 				+ ", transactionType=" + transactionType + "]";
 	}
-	
+
 }

@@ -11,8 +11,8 @@ public interface EquityPositionService {
 
 	public void acceptTransaction(Transaction transaction) throws UnexpectedTransaction;
 
-	public void processTransaction() throws UnexpectedTransaction;
+	public void processStoredTransaction() throws UnexpectedTransaction;
 
-	public List<EquityPosition> listEquityPositions();
+	public List<EquityPosition> listEquityPositions() throws UnexpectedTransaction;
 
 }
